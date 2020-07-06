@@ -1,0 +1,14 @@
+{{- if .Values.questdb.config.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "questdb.fullname" . }}
+  labels:
+    {{- include "questdb.labels" . | nindent 4 }}
+data:
+  server.conf: |
+    {{- range $key, $value := index .Values.questdb.config.options }}
+    {{ $key }} = {{ $value }}
+    {{ end }}
+
+{{ end }}

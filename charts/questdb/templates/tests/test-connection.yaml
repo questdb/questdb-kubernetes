@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "{{ include "questdb.fullname" . }}-test-connection"
+  labels:
+    {{- include "questdb.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test-success
+spec:
+  containers:
+    - name: curl
+      image: curlimages/curl:7.71.0
+      command: ['curl']
+      args: ['-G', '{{ include "questdb.fullname" . }}:{{ .Values.service.port }}', '--data-urlencode', 'query="SHOW TABLES;"']
+  restartPolicy: Never
