@@ -1,0 +1,105 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "questdb.fullname" . }}
+  labels:
+    {{- include "questdb.labels" . | nindent 4 }}
+spec:
+  # Not horizontally scalable, so pinning to 1
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "questdb.selectorLabels" . | nindent 6 }}
+  serviceName: "{{ include "questdb.fullname" . }}"
+  template:
+    metadata:
+    {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      labels:
+        {{- include "questdb.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        {{- if not .Values.persistence.enabled }}
+        - name: data
+          emptyDir: {}
+        {{- end }}
+        {{- if .Values.questdb.config.enabled }}
+        - name: config
+          configMap:
+            name: {{ include "questdb.fullname" . }}
+        {{ end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          volumeMounts:
+          - name: {{ include "questdb.fullname" . }}
+            mountPath: /root/.questdb/db
+          {{- if .Values.questdb.config.enabled }}
+          - name: config
+            mountPath: /root/.questdb/conf/server.conf
+            subPath: server.conf
+          {{ end }}
+          ports:
+            - name: http
+              containerPort: 9000
+              protocol: TCP
+            - name: postgresql
+              containerPort: 8812
+              protocol: TCP
+          # QuestDB doesn't really expose an endpoint that works well for
+          # these probes. Hopefully soon?
+          # livenessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          # readinessProbe:
+          #   httpGet:
+          #     path: /
+          #     port: http
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{- if .Values.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: {{ include "questdb.fullname" . }}
+        annotations:
+        {{- range $key, $value := .Values.persistence.annotations }}
+          {{ $key }}: "{{ $value }}"
+        {{- end }}
+      spec:
+        accessModes:
+          - {{ .Values.persistence.accessMode | quote}}
+        resources:
+          requests:
+            storage: {{ .Values.persistence.size | quote }}
+      {{- if .Values.persistence.storageClass }}
+      {{- if (eq "-" .Values.persistence.storageClass) }}
+        storageClassName: ""
+      {{- else }}
+        storageClassName: "{{ .Values.persistence.storageClass }}"
+      {{- end }}
+      {{- end }}
+  {{- end }}
