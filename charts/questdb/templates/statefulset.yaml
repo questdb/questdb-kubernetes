@@ -57,6 +57,9 @@ spec:
             - name: postgresql
               containerPort: 8812
               protocol: TCP
+            - name: influxdb
+              containerPort: 9009
+              protocol: TCP
           # QuestDB doesn't really expose an endpoint that works well for
           # these probes. Hopefully soon?
           # livenessProbe:

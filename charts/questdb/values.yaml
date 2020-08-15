@@ -29,7 +29,13 @@ questdb:
 service:
   type: ClusterIP
   port: 80
-  exposePostgreSQL: false
+  expose:
+    postgresql:
+      enabled: false
+      port: 8812
+    influx:
+      enabled: false
+      port: 9009
 
 ## Persist data to a persistent volume
 ##

@@ -11,11 +11,17 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
-    {{- if .Values.service.exposePostgreSQL }}
-    - port: {{ .Values.service.port }}
+    {{- if .Values.service.expose.postgresql.enabled }}
+    - port: {{ .Values.service.expose.postgresql.port }}
       targetPort: postgresql
       protocol: TCP
       name: postgresql
+    {{ end }}
+    {{- if .Values.service.expose.influxdb.enabled }}
+    - port: {{ .Values.service.expose.influxdb.port }}
+      targetPort: influxdb
+      protocol: TCP
+      name: influxdb
     {{ end }}
   selector:
     {{- include "questdb.selectorLabels" . | nindent 4 }}
