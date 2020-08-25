@@ -1,0 +1,15 @@
+apiVersion: v1
+entries:
+  questdb:
+  - apiVersion: v2
+    appVersion: 5.0.2
+    created: "2020-08-25T10:05:24.999545289+01:00"
+    description: QuestDB on Kubernetes, via Helm
+    digest: cbfc0153dfd652ad00d0c895603840cfa2d7b260f5a763f117549610999145c4
+    icon: https://questdb.io/img/favicon.png
+    name: questdb
+    type: application
+    urls:
+    - https://questdb.github.io/questdb-kubernetes/questdb-0.2.1.tgz
+    version: 0.2.1
+generated: "2020-08-25T10:05:24.99907915+01:00"
