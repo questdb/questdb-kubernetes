@@ -5,7 +5,7 @@ metadata:
   labels:
     {{- include "questdb.labels" . | nindent 4 }}
 spec:
-  # Not horizontally scalable, so pinning to 1
+  # Not horizontally scalable yet, so pinning to 1
   replicas: 1
   selector:
     matchLabels:
