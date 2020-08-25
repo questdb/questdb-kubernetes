@@ -23,6 +23,13 @@ helm repo add questdb https://helm.questdb.io/
 helm repo update
 ```
 
+## Hubs
+
+You can find our Helm charts distributed on:
+
+- [Artifact Hub](https://artifacthub.io/packages/helm/questdb/questdb)
+- Helm Hub - coming soon!
+
 ## Charts
 
 - [QuestDB](charts/questdb/README.md)

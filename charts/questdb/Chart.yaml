@@ -4,15 +4,18 @@ version: 0.2.2
 appVersion: 5.0.2
 description: Run QuestDB on Kubernetes via Helm
 icon: https://questdb.io/img/favicon.png
-home: https://github.com/questdb/questdb-kubernetes
+home: https://questdb.io
+sources:
+  - https://github.com/questdb/questdb-kubernetes
 type: application
 keywords:
   - questdb
   - database
   - timeseries
+  - sql
 maintainers:
-- email: meril@questdb.io
-  name: Méril
+- email: containers@questdb.io
+  name: QuestDB Team
 
 # Chart.yaml reference:
 # https://helm.sh/docs/topics/charts/#the-chart-yaml-file
