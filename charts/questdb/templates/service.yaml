@@ -1,3 +1,6 @@
+{{ $expose := default dict .Values.service.expose }}
+{{ $influxdb := default dict $expose.influxdb }}
+{{ $postgresql := default dict $expose.postgresql }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -11,14 +14,14 @@ spec:
       targetPort: http
       protocol: TCP
       name: http
-    {{- if .Values.service.expose.postgresql.enabled }}
-    - port: {{ .Values.service.expose.postgresql.port }}
+    {{- if $postgresql.enabled }}
+    - port: {{ $postgresql.port }}
       targetPort: postgresql
       protocol: TCP
       name: postgresql
     {{ end }}
-    {{- if .Values.service.expose.influxdb.enabled }}
-    - port: {{ .Values.service.expose.influxdb.port }}
+    {{- if $influxdb.enabled }}
+    - port: {{ $influxdb.port }}
       targetPort: influxdb
       protocol: TCP
       name: influxdb
