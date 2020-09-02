@@ -1,5 +1,16 @@
 # Helm Charts for QuestDB
 
+Here you will find both the code for our Helm charts and the artifacts available
+through GitHub Pages as a standard charts repository.
+
+<!-- prettier-ignore-start -->
+<div align="center">
+  <a href="http://questdb.io">
+    <img src=".github/containers.png" width="400" />
+  </a>
+</div>
+<!-- prettier-ignore-end -->
+
 ## What is QuestDB
 
 [QuestDB](https://questdb.io) is an open source database designed to make time
