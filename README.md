@@ -39,7 +39,7 @@ helm repo update
 You can find our Helm charts distributed on:
 
 - [Artifact Hub](https://artifacthub.io/packages/helm/questdb/questdb)
-- Helm Hub - coming soon!
+- [Helm Hub](https://hub.helm.sh/charts/questdb/questdb)
 
 ## Charts
 
