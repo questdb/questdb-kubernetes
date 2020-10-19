@@ -48,28 +48,27 @@ You can find our Helm charts distributed on:
 ## Resources
 
 Complete references are available in the
-[Documentation](https://questdb.io/docs/introduction). There are also several
-guides to get started.
+[Documentation](https://questdb.io/docs/introduction/).
 
-Quick-start guides:
+Get started:
 
-- [Docker](https://questdb.io/docs/guide/docker)
-- [Homebrew](https://questdb.io/docs/guide/homebrew)
-- [Using the binaries](https://questdb.io/docs/guide/binaries)
+- [Docker](https://questdb.io/docs/get-started/docker/)
+- [Binaries](https://questdb.io/docs/get-started/binaries/)
+- [Homebrew](https://questdb.io/docs/get-started/homebrew/)
 
-Usage guides:
+Develop:
 
-- [Web Console](https://questdb.io/docs/guide/web-console)
-- [Postgres wire with PSQL](https://questdb.io/docs/guide/postgres-wire) (alpha)
-- [REST API](https://questdb.io/docs/guide/rest)
-- [CRUD operations](https://questdb.io/docs/guide/crud)
+- [Connect](https://questdb.io/docs/develop/connect/)
+- [Insert data](https://questdb.io/docs/develop/insert-data/)
+- [Query data](https://questdb.io/docs/develop/query-data/)
+- [Authenticate](https://questdb.io/docs/develop/authenticate/)
 
 Concepts:
 
-- [SQL extensions](https://questdb.io/docs/concept/sql-extensions)
-- [Storage model](https://questdb.io/docs/concept/storage-model)
-- [Partitions](https://questdb.io/docs/concept/partitions)
-- [Designated timestamp](https://questdb.io/docs/concept/designated-timestamp)
+- [SQL extensions](https://questdb.io/docs/concept/sql-extensions/)
+- [Storage model](https://questdb.io/docs/concept/storage-model/)
+- [Partitions](https://questdb.io/docs/concept/partitions/)
+- [Designated timestamp](https://questdb.io/docs/concept/designated-timestamp/)
 
 ## Support / Contact
 
