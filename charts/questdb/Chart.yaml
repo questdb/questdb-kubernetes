@@ -1,7 +1,7 @@
 apiVersion: v2
 name: questdb
-version: 0.2.5
-appVersion: 5.0.4
+version: 0.2.6
+appVersion: 5.0.5
 description: Run QuestDB on Kubernetes via Helm
 icon: https://questdb.io/img/favicon.png
 home: https://questdb.io
