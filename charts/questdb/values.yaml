@@ -1,6 +1,7 @@
 image:
   repository: questdb/questdb
   pullPolicy: IfNotPresent
+  tag: 5.0.6.1-linux-amd64
 
 imagePullSecrets: []
 nameOverride: ""
@@ -18,7 +19,7 @@ questdb:
 
 service:
   type: ClusterIP
-  port: 80
+  port: 9000
   expose:
     postgresql:
       enabled: false

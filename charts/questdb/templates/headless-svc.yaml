@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "questdb.fullname" . }}-headless
+  labels:
+  {{- include "questdb.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: postgresql
+      port: 8812
+      targetPort: postgresql
+  selector:
+  {{- include "questdb.selectorLabels" . | nindent 4 }}

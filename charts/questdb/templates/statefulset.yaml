@@ -10,7 +10,7 @@ spec:
   selector:
     matchLabels:
       {{- include "questdb.selectorLabels" . | nindent 6 }}
-  serviceName: "{{ include "questdb.fullname" . }}"
+  serviceName: "{{ include "questdb.fullname" . }}-headless"
   template:
     metadata:
     {{- with .Values.podAnnotations }}
@@ -71,7 +71,7 @@ spec:
           #     path: /
           #     port: http
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.resources | nindent 12 }}       
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
