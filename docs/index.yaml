@@ -3,6 +3,28 @@ entries:
   questdb:
   - apiVersion: v2
     appVersion: 6.0.1
+    created: "2021-05-24T19:01:40.288465+02:00"
+    description: Run QuestDB on Kubernetes via Helm
+    digest: fdb5e1a14e053d54948cd3a1d64c7af7fc2db270a0e92db8c28e733d6c5c86ba
+    home: https://questdb.io
+    icon: https://questdb.io/img/favicon.png
+    keywords:
+    - questdb
+    - database
+    - timeseries
+    - sql
+    maintainers:
+    - email: containers@questdb.io
+      name: QuestDB Team
+    name: questdb
+    sources:
+    - https://github.com/questdb/questdb-kubernetes
+    type: application
+    urls:
+    - https://questdb.github.io/questdb-kubernetes/questdb-0.5.0.tgz
+    version: 0.5.0
+  - apiVersion: v2
+    appVersion: 6.0.1
     created: "2021-05-18T19:08:38.374369+01:00"
     description: Run QuestDB on Kubernetes via Helm
     digest: b31dea3092c2bcebf69781f65d552bef8034e970cd53b01ff63ed4ebd563b8c8
