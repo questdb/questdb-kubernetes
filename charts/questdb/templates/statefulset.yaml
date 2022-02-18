@@ -26,16 +26,6 @@ spec:
       {{- end }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      volumes:
-        {{- if not .Values.persistence.enabled }}
-        - name: data
-          emptyDir: {}
-        {{- end }}
-        {{- if .Values.questdb.config.enabled }}
-        - name: config
-          configMap:
-            name: {{ include "questdb.fullname" . }}
-        {{ end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
@@ -84,7 +74,20 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-  {{- if .Values.persistence.enabled }}
+      volumes:
+        {{- if .Values.questdb.config.enabled }}
+        - name: config
+          configMap:
+            name: {{ include "questdb.fullname" . }}
+        {{ end }}
+  {{- if and .Values.persistence.enabled .Values.persistence.existingClaim }}
+        - name: {{ include "questdb.fullname" . }}
+          persistentVolumeClaim:
+            claimName: {{ tpl .Values.persistence.existingClaim $ }}
+  {{- else if not .Values.persistence.enabled }}
+        - name: {{ include "questdb.fullname" . }}
+          emptyDir: {}
+  {{- else }}
   volumeClaimTemplates:
     - metadata:
         name: {{ include "questdb.fullname" . }}

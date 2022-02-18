@@ -33,6 +33,11 @@ persistence:
   enabled: true
   accessMode: ReadWriteOnce
   size: 50Gi
+  # Uncomment existingClaim to enable existing pvc to be mounted for db storage
+  # size and accessMode will be ignored
+  # existiung pvc needs to be in the namespace where questdb will be deployed
+  # if you have problems with aws availability zones use nodeSelector to schedule nodes in the same az as volume
+  # existingClaim: PVC_NAME_HERE
 
 ingress:
   enabled: false
