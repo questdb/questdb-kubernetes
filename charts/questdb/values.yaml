@@ -42,6 +42,12 @@ persistence:
 ingress:
   enabled: false
   annotations: {}
+  # Setup for hosts could be:
+# hosts:
+  # - host: someurl.qeustdb.com
+    # paths:
+      # - path: /
+        # pathType: Prefix
 
 resources: {}
 nodeSelector: {}
