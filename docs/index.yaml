@@ -515,4 +515,8 @@ entries:
     urls:
     - https://questdb.github.io/questdb-kubernetes/questdb-0.2.1.tgz
     version: 0.2.1
+<<<<<<< HEAD
 generated: "2022-05-17T14:58:28.249716+01:00"
+=======
+generated: "2022-05-05T19:15:06.532136+01:00"
+>>>>>>> repo
