@@ -42,6 +42,15 @@ persistence:
 ingress:
   enabled: false
   annotations: {}
+  # tls:
+  #   - hosts:
+  #       - example.com
+  #     secretName: questdb-certificate
+  # ingressClassName: nginx
+  # hosts:
+  #   - host: example.com
+  #     paths:
+  #       - /
 
 resources: {}
 nodeSelector: {}
