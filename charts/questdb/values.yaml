@@ -1,7 +1,7 @@
 image:
   repository: questdb/questdb
   pullPolicy: IfNotPresent
-  tag: 6.4
+  tag: 6.4.1
 
 imagePullSecrets: []
 nameOverride: ""
