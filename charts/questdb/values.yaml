@@ -12,10 +12,13 @@ podSecurityContext: {}
 securityContext: {}
 
 questdb:
-  config:
+  serverConfig:
     enabled: true
     options:
        shared.worker.count: 2
+  loggingConfig:
+    enabled: false
+    options: {}
 
 service:
   annotations: {}

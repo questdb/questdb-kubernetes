@@ -35,11 +35,16 @@ spec:
           volumeMounts:
           - name: {{ include "questdb.fullname" . }}
             mountPath: /root/.questdb/db
-          {{- if .Values.questdb.config.enabled }}
-          - name: config
+          {{- if .Values.questdb.serverConfig.enabled }}
+          - name: server-config
             mountPath: /root/.questdb/conf/server.conf
             subPath: server.conf
-          {{ end }}
+          {{- end }}
+          {{- if .Values.questdb.loggingConfig.enabled }}
+          - name: logging-config
+            mountPath: /root/.questdb/conf/log.conf
+            subPath: log.conf
+          {{- end }}
           ports:
             - name: http
               containerPort: 9000
@@ -75,11 +80,16 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
-        {{- if .Values.questdb.config.enabled }}
-        - name: config
+        {{- if .Values.questdb.serverConfig.enabled }}
+        - name: server-config
           configMap:
             name: {{ include "questdb.fullname" . }}
-        {{ end }}
+        {{- end }}
+        {{- if .Values.questdb.loggingConfig.enabled }}
+        - name: logging-config
+          configMap:
+            name: {{ include "questdb.fullname" . }}
+        {{- end }}
   {{- if and .Values.persistence.enabled .Values.persistence.existingClaim }}
         - name: {{ include "questdb.fullname" . }}
           persistentVolumeClaim:
