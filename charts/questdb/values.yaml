@@ -16,6 +16,7 @@ questdb:
     enabled: true
     options:
        shared.worker.count: 2
+  env: {}
 
 service:
   annotations: {}
