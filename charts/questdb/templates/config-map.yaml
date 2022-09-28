@@ -1,4 +1,4 @@
-{{- if .Values.questdb.config.enabled -}}
+{{- if or .Values.questdb.serverConfig.enabled .Values.questdb.loggingConfig.enabled -}}
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -6,9 +6,16 @@ metadata:
   labels:
     {{- include "questdb.labels" . | nindent 4 }}
 data:
+  {{- if .Values.questdb.serverConfig.enabled }}
   server.conf: |
-    {{- range $key, $value := index .Values.questdb.config.options }}
+    {{- range $key, $value := index .Values.questdb.serverConfig.options }}
     {{ $key }} = {{ $value }}
-    {{ end }}
-
+    {{- end }}
+  {{- end }}
+  {{- if .Values.questdb.loggingConfig.enabled }}
+  log.conf: |
+    {{- range $key, $value := index .Values.questdb.loggingConfig.options }}
+    {{ $key }} = {{ $value }}
+    {{- end }}
+  {{- end }}
 {{ end }}
