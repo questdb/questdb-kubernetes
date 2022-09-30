@@ -17,8 +17,9 @@ questdb:
     options:
        shared.worker.count: 2
   loggingConfig:
-    enabled: false
-    options: {}
+    enabled: true
+    options:
+      w.stdout.level: DEBUG
   env: {}
 
 service:
