@@ -39,15 +39,15 @@ spec:
           {{- end }}
           volumeMounts:
           - name: {{ include "questdb.fullname" . }}
-            mountPath: /var/lib/questdb/db
+            mountPath: {{ .Values.questdb.dataDir }}/db
           {{- if .Values.questdb.serverConfig.enabled }}
           - name: server-config
-            mountPath: /var/lib/questdb/conf/server.conf
+            mountPath: {{ .Values.questdb.dataDir }}/conf/server.conf
             subPath: server.conf
           {{- end }}
           {{- if .Values.questdb.loggingConfig.enabled }}
           - name: logging-config
-            mountPath: /var/lib/questdb/conf/log.conf
+            mountPath: {{ .Values.questdb.dataDir }}/conf/log.conf
             subPath: log.conf
           {{- end }}
           ports:
