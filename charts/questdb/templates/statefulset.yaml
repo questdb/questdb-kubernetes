@@ -50,6 +50,9 @@ spec:
             mountPath: {{ .Values.questdb.dataDir }}/conf/log.conf
             subPath: log.conf
           {{- end }}
+          {{- if .Values.extraVolumeMounts }}
+            {{ toYaml .Values.extraVolumeMounts | nindent 10 }}
+          {{- end }}
           ports:
             - name: http
               containerPort: 9000
@@ -94,6 +97,9 @@ spec:
         - name: logging-config
           configMap:
             name: {{ include "questdb.fullname" . }}
+        {{- end }}
+        {{- if .Values.extraVolumes }}
+          {{ toYaml .Values.extraVolumes | nindent 8 }}
         {{- end }}
   {{- if and .Values.persistence.enabled .Values.persistence.existingClaim }}
         - name: {{ include "questdb.fullname" . }}

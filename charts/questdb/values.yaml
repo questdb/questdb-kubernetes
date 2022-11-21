@@ -10,6 +10,8 @@ fullnameOverride: ""
 podAnnotations: {}
 podSecurityContext: {}
 securityContext: {}
+extraVolumes: []
+extraVolumeMounts: []
 
 questdb:
   dataDir: /var/lib/questdb
