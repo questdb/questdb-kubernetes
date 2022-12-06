@@ -1,6 +1,7 @@
 {{ $expose := default dict .Values.service.expose }}
 {{ $influxdb := default dict $expose.influxdb }}
 {{ $postgresql := default dict $expose.postgresql }}
+{{ $metrics := default dict .Values.metrics }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -29,6 +30,12 @@ spec:
       targetPort: influxdb
       protocol: TCP
       name: influxdb
+    {{ end }}
+    {{- if $metrics.enabled }}
+    - port: {{ $metrics.port }}
+      targetPort: metrics
+      protocol: TCP
+      name: metrics
     {{ end }}
   selector:
     {{- include "questdb.selectorLabels" . | nindent 4 }}

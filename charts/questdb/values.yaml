@@ -63,3 +63,7 @@ resources: {}
 nodeSelector: {}
 tolerations: []
 affinity: {}
+
+metrics:
+  enabled: true
+  port: 9003

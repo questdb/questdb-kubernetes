@@ -63,6 +63,11 @@ spec:
             - name: influxdb
               containerPort: 9009
               protocol: TCP
+            {{- if .Values.metrics.enabled }}
+            - name: metrics
+              containerPort: {{ .Values.metrics.port }}
+              protocol: TCP
+            {{- end }}
           # QuestDB doesn't really expose an endpoint that works well for
           # these probes. Hopefully soon?
           # livenessProbe:
