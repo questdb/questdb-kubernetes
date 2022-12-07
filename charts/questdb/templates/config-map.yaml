@@ -8,6 +8,10 @@ metadata:
 data:
   {{- if .Values.questdb.serverConfig.enabled }}
   server.conf: |
+    {{- if .Values.metrics.enabled }}
+    metrics.enabled = true
+    {{- end }}
+
     {{- range $key, $value := index .Values.questdb.serverConfig.options }}
     {{ $key }} = {{ $value }}
     {{- end }}
