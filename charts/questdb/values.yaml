@@ -67,3 +67,5 @@ affinity: {}
 metrics:
   enabled: true
   port: 9003
+
+sidecars: []
