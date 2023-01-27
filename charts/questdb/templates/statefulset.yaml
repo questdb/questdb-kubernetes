@@ -37,6 +37,34 @@ spec:
             - name: {{ $key }}
               value: "{{ $value }}"
           {{- end }}
+          {{- if or .Values.generateSecrets.psqlSecret.enabled .Values.existingSecrets }}
+            - name: QDB_PG_USER
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: {{ include "questdb.pgSecretName" . }}
+                  optional: false
+            - name: QDB_PG_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: {{ include "questdb.pgSecretName" . }}
+                  optional: false
+            {{- if or .Values.generateSecrets.psqlSecret.enableReadOnlyUser .Values.existingSecrets.enableReadOnlyUser }}
+            - name: QDB_PG_READONLY_USER
+              valueFrom:
+                secretKeyRef:
+                  key: readonly-username
+                  name: {{ include "questdb.pgSecretName" . }}
+                  optional: false
+            - name: QDB_PG_READONLY_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  key: readonly-password
+                  name: {{ include "questdb.pgSecretName" . }}
+                  optional: false
+            {{- end }}
+          {{- end }}
           volumeMounts:
           - name: {{ include "questdb.fullname" . }}
             mountPath: {{ .Values.questdb.dataDir }}/db

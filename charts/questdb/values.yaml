@@ -69,3 +69,12 @@ metrics:
   port: 9003
 
 sidecars: []
+
+generateSecrets:
+  psqlSecret:
+    enabled: false
+    enableReadOnlyUser: false
+
+existingSecrets: {}
+  # pgSecretName: psql-secret
+  # enableReadOnlyUser: false
