@@ -41,26 +41,26 @@ spec:
             - name: QDB_PG_USER
               valueFrom:
                 secretKeyRef:
-                  key: username
+                  key: {{ include "questdb.pgSecretUserKey" . }}
                   name: {{ include "questdb.pgSecretName" . }}
                   optional: false
             - name: QDB_PG_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: password
+                  key: {{ include "questdb.pgSecretPasswordKey" . }}
                   name: {{ include "questdb.pgSecretName" . }}
                   optional: false
             {{- if or .Values.generateSecrets.psqlSecret.enableReadOnlyUser .Values.existingSecrets.enableReadOnlyUser }}
             - name: QDB_PG_READONLY_USER
               valueFrom:
                 secretKeyRef:
-                  key: readonly-username
+                  key: {{ include "questdb.pgSecretReadOnlyUserKey" . }}
                   name: {{ include "questdb.pgSecretName" . }}
                   optional: false
             - name: QDB_PG_READONLY_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  key: readonly-password
+                  key: {{ include "questdb.pgSecretReadOnlyPasswordKey" . }}
                   name: {{ include "questdb.pgSecretName" . }}
                   optional: false
             {{- end }}

@@ -70,3 +70,35 @@ Create the name of the service account to use
 {{-  printf "%s-%s" (include "questdb.fullname" .) "pg-secret" -}}
 {{- end }}
 {{- end }}
+
+{{- define "questdb.pgSecretUserKey" -}}
+{{- if .Values.existingSecrets }}
+{{- .Values.existingSecrets.pgSecretUserKey }}
+{{- else }}
+{{- default "username" -}}
+{{- end }}
+{{- end }}
+
+{{- define "questdb.pgSecretPasswordKey" -}}
+{{- if .Values.existingSecrets }}
+{{- .Values.existingSecrets.pgSecretPasswordKey }}
+{{- else }}
+{{- default "password" -}}
+{{- end }}
+{{- end }}
+
+{{- define "questdb.pgSecretReadOnlyUserKey" -}}
+{{- if .Values.existingSecrets }}
+{{- .Values.existingSecrets.pgSecretReadOnlyUserKey }}
+{{- else }}
+{{- default "readonly-username" -}}
+{{- end }}
+{{- end }}
+
+{{- define "questdb.pgSecretReadOnlyPasswordKey" -}}
+{{- if .Values.existingSecrets }}
+{{- .Values.existingSecrets.pgSecretReadOnlyPasswordKey }}
+{{- else }}
+{{- default "readonly-password" -}}
+{{- end }}
+{{- end }}

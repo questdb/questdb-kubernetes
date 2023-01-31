@@ -77,4 +77,8 @@ generateSecrets:
 
 existingSecrets: {}
   # pgSecretName: psql-secret
+  # pgSecretUserKey: username
+  # pgSecretPasswordKey: password
   # enableReadOnlyUser: false
+  # pgSecretReadOnlyUserKey: readonly-username
+  # pgSecretReadOnlyPasswordKey: readonly-password
