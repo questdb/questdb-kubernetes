@@ -42,7 +42,7 @@ persistence:
   size: 50Gi
   annotations: {}
   # Uncomment storageClass if you want to use a specific Storage Class
-  # storageClassName: STORAGE_CLASS_NAME_HERE
+  # storageClass: STORAGE_CLASS_NAME_HERE
   # Uncomment existingClaim to enable existing pvc to be mounted for db storage
   # size and accessMode will be ignored
   # existing pvc needs to be in the namespace where questdb will be deployed
