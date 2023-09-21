@@ -22,7 +22,13 @@ questdb:
   loggingConfig:
     enabled: false
     options: {}
-  env: {}
+  # env supports key/value pairs that are added directly to the questdb statefulset's env
+  env:
+    HELLO: blablabla
+  # envFrom supports a list of sources that will be injected into the questdb statefulset's env
+  envFrom:
+  - secretRef:
+      name: my-secret
 
 service:
   annotations: {}
