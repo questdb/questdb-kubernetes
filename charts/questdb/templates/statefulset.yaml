@@ -37,6 +37,10 @@ spec:
             - name: {{ $key }}
               value: "{{ $value }}"
           {{- end }}
+          {{- if .Values.questdb.envFrom }}
+          envFrom:
+            {{ toYaml .Values.questdb.envFrom | nindent 10 }}
+          {{- end }}
           volumeMounts:
           - name: {{ include "questdb.fullname" . }}
             mountPath: {{ .Values.questdb.dataDir }}/db
