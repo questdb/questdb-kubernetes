@@ -23,12 +23,9 @@ questdb:
     enabled: false
     options: {}
   # env supports key/value pairs that are added directly to the questdb statefulset's env
-  env:
-    HELLO: blablabla
+  env: {}
   # envFrom supports a list of sources that will be injected into the questdb statefulset's env
-  envFrom:
-  - secretRef:
-      name: my-secret
+  envFrom: []
 
 service:
   annotations: {}
