@@ -76,3 +76,12 @@ metrics:
   port: 9003
 
 sidecars: []
+
+serviceAccount:
+  create: false
+  labels: {}
+  annotations: {}
+
+  # if create is set to "true", you can specify the name of that service account below
+  # if create is set to "false", you can use this to reference an existing service account for the StatefulSet pod
+  # name: custom-service-account-name
