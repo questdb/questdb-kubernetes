@@ -77,7 +77,7 @@ metrics:
 sidecars: []
 
 serviceAccount:
-  create: true
+  create: false
   labels: {}
   annotations: {}
 
