@@ -12,6 +12,8 @@ podSecurityContext: {}
 securityContext: {}
 extraVolumes: []
 extraVolumeMounts: []
+extraLabels:
+  my-label: my-value
 
 questdb:
   dataDir: /var/lib/questdb

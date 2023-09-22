@@ -19,6 +19,9 @@ spec:
     {{- end }}
       labels:
         {{- include "questdb.selectorLabels" . | nindent 8 }}
+        {{- if .Values.extraLabels }}
+        {{ toYaml .Values.extraLabels | nindent 8 }}
+        {{- end }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
