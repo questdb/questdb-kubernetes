@@ -70,6 +70,29 @@ resources: {}
 nodeSelector: {}
 tolerations: []
 affinity: {}
+readinessProbe: {}
+  # Example of readinessProbe
+  # failureThreshold: 3
+  # httpGet:
+  #   path: /status
+  #   port: 9003
+  #   scheme: HTTP
+  # initialDelaySeconds: 5
+  # periodSeconds: 10
+  # successThreshold: 1
+  # timeoutSeconds: 2
+livenessProbe: {}
+  # Example of livenessProbe
+  # failureThreshold: 5
+  # httpGet:
+  #   path: /status
+  #   port: 9003
+  #   scheme: HTTP
+  # initialDelaySeconds: 5
+  # periodSeconds: 10
+  # successThreshold: 1
+  # timeoutSeconds: 2
+
 
 metrics:
   enabled: true
