@@ -37,9 +37,9 @@ spec:
       http:
         paths:
           {{- range .paths }}
-          - path: {{ . }}
+          - path: {{ .path }}
             {{- if (semverCompare ">=1.18-0" $.Capabilities.KubeVersion.GitVersion) }}
-            pathType: ImplementationSpecific
+            pathType: {{ default "ImplementationSpecific" .pathType | quote }}
             {{- end }}
             backend:
             {{- if semverCompare ">=1.19-0" $.Capabilities.KubeVersion.GitVersion }}
@@ -53,4 +53,4 @@ spec:
               {{- end }}
           {{- end }}
     {{- end }}
-  {{- end }}
+{{- end }}
