@@ -64,7 +64,8 @@ ingress:
   # hosts:
   #   - host: example.com
   #     paths:
-  #       - /
+  #       - path: /
+  #         pathType: ImplementationSpecific
 
 resources: {}
 nodeSelector: {}
