@@ -88,6 +88,22 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+        {{- if .Values.questdb.hotReload.enabled }}
+        - name: config-reloader
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.questdb.hotReload.image.repository }}:{{ .Values.questdb.hotReload.image.tag }}"
+          imagePullPolicy: {{ .Values.questdb.hotReload.image.pullPolicy }}
+          args:
+          - "-configmap"
+          - "-config={{ .Values.questdb.dataDir }}/conf/server.conf"
+          - "-name={{ include "questdb.fullname" . }}"
+          - "-key=server.conf"
+          volumeMounts:
+          - name: server-config
+            mountPath: {{ .Values.questdb.dataDir }}/conf/server.conf
+            subPath: server.conf
+        {{- end }}
         {{- if .Values.sidecars  }}
           {{- toYaml .Values.sidecars | nindent 8 }}
         {{- end }}

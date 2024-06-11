@@ -12,6 +12,10 @@ data:
     metrics.enabled = true
     {{- end }}
 
+    {{- if .Values.questdb.hotReload.enabled }}
+    config.reload.enabled = true
+    {{- end }}
+
     {{- range $key, $value := index .Values.questdb.serverConfig.options }}
     {{ $key }} = {{ $value }}
     {{- end }}

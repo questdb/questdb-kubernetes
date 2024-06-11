@@ -27,6 +27,12 @@ questdb:
   env: {}
   # envFrom supports a list of sources that will be injected into the questdb statefulset's env
   envFrom: []
+  hotReload:
+    image:
+      repository: questdb/questdb-config-reloader
+      pullPolicy: IfNotPresent
+      tag: 0.1.0
+    enabled: true
 
 service:
   annotations: {}
