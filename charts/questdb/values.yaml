@@ -13,6 +13,7 @@ securityContext: {}
 extraVolumes: []
 extraVolumeMounts: []
 extraLabels: {}
+initContainers: []
 
 questdb:
   dataDir: /var/lib/questdb
