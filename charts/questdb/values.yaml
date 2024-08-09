@@ -71,8 +71,7 @@ resources: {}
 nodeSelector: {}
 tolerations: []
 affinity: {}
-readinessProbe:
-  {}
+readinessProbe: {}
   # Example of readinessProbe
   # failureThreshold: 3
   # httpGet:
@@ -83,8 +82,7 @@ readinessProbe:
   # periodSeconds: 10
   # successThreshold: 1
   # timeoutSeconds: 2
-livenessProbe:
-  {}
+livenessProbe: {}
   # Example of livenessProbe
   # failureThreshold: 5
   # httpGet:
@@ -95,6 +93,7 @@ livenessProbe:
   # periodSeconds: 10
   # successThreshold: 1
   # timeoutSeconds: 2
+
 
 metrics:
   enabled: true
