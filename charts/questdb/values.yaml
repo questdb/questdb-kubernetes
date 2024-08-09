@@ -99,6 +99,7 @@ metrics:
   enabled: true
   port: 9003
 
+initContainers: []
 sidecars: []
 
 serviceAccount:
