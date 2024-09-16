@@ -13,10 +13,11 @@ spec:
   serviceName: "{{ include "questdb.fullname" . }}-headless"
   template:
     metadata:
-    {{- with .Values.podAnnotations }}
       annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/config-map.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
-    {{- end }}
+        {{- end }}
       labels:
         {{- include "questdb.selectorLabels" . | nindent 8 }}
         {{- if .Values.extraLabels }}
