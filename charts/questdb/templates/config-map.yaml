@@ -1,25 +1,32 @@
 {{- if or .Values.questdb.serverConfig.enabled .Values.questdb.loggingConfig.enabled -}}
 apiVersion: v1
+{{- if eq .Values.questdb.configStorageType "Secret" }}
+kind: Secret
+{{- else }}
 kind: ConfigMap
+{{- end }}
 metadata:
   name: {{ include "questdb.fullname" . }}
   labels:
     {{- include "questdb.labels" . | nindent 4 }}
+
+{{- if eq .Values.questdb.configStorageType "Secret" }}
+data:
+  {{- if .Values.questdb.serverConfig.enabled }}
+  server.conf: {{ include "generateServerConfig" . | b64enc -}}
+  {{- end }}
+  {{- if .Values.questdb.loggingConfig.enabled }}
+  log.conf: {{ include "generateLogConfig" . | b64enc -}}
+  {{- end }}
+{{- else }}
 data:
   {{- if .Values.questdb.serverConfig.enabled }}
   server.conf: |
-    {{- if .Values.metrics.enabled }}
-    metrics.enabled = true
-    {{- end }}
-
-    {{- range $key, $value := index .Values.questdb.serverConfig.options }}
-    {{ $key }} = {{ $value }}
-    {{- end }}
+    {{- include "generateServerConfig" . | nindent 4 -}}
   {{- end }}
   {{- if .Values.questdb.loggingConfig.enabled }}
   log.conf: |
-    {{- range $key, $value := index .Values.questdb.loggingConfig.options }}
-    {{ $key }} = {{ $value }}
-    {{- end }}
+    {{- include "generateLogConfig" . | nindent 4 -}}
   {{- end }}
-{{ end }}
+{{- end }}
+{{- end }}
