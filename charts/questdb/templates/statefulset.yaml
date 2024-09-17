@@ -14,7 +14,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/config: {{ include (print $.Template.BasePath "/config-map.yaml") . | sha256sum }}
+        checksum/config: {{ include (print $.Template.BasePath "/config.yaml") . | sha256sum }}
         {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -111,13 +111,23 @@ spec:
       volumes:
         {{- if .Values.questdb.serverConfig.enabled }}
         - name: server-config
+          {{- if eq .Values.questdb.configStorageType "Secret" }}
+          secret:
+              secretName: {{ include "questdb.fullname" . }}
+          {{- else }}
           configMap:
             name: {{ include "questdb.fullname" . }}
+          {{- end }}
         {{- end }}
         {{- if .Values.questdb.loggingConfig.enabled }}
         - name: logging-config
+          {{- if eq .Values.questdb.configStorageType "Secret" }}
+          secret:
+              secretName: {{ include "questdb.fullname" . }}
+          {{- else }}
           configMap:
             name: {{ include "questdb.fullname" . }}
+          {{- end }}
         {{- end }}
         {{- if .Values.extraVolumes }}
           {{ toYaml .Values.extraVolumes | nindent 8 }}

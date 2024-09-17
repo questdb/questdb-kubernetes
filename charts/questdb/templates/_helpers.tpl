@@ -57,3 +57,25 @@ Create the name of the service account to use
 {{- define "questdb.serviceAccountName" -}}
 {{- default (include "questdb.fullname" .) .Values.serviceAccount.name }}
 {{- end }}
+
+
+{{/*
+Generate server.conf file content
+*/}}
+{{- define "generateServerConfig" -}}
+{{- if .Values.metrics.enabled -}}
+metrics.enabled = true
+{{- end }}
+{{- range $key, $value := index .Values.questdb.serverConfig.options }}
+{{ $key }} = {{ $value }}
+{{- end }}
+{{- end }}
+
+{{/*
+Generate log.conf file content
+*/}}
+{{- define "generateLogConfig" -}}
+{{- range $key, $value := index .Values.questdb.loggingConfig.options }}
+{{ $key }} = {{ $value }}
+{{- end }}
+{{- end }}
