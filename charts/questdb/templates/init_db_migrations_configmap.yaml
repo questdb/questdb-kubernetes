@@ -11,9 +11,11 @@ data:
       set -e
 
       SOURCE_DIR="/mnt/questdb"
-      DEST_DIR="/mnt/questdb/db"
+      DEST_DIR="/mnt/questdb/abracadabra"
 
       MARKER="tables.d.0"
+
+      ls -lah $SOURCE_DIR
 
       # Ensure the destination directory exists
       mkdir -p "$DEST_DIR"
@@ -28,5 +30,3 @@ data:
       else
           echo "File '$MARKER' not found. Nothing to move."
       fi
-
-      
