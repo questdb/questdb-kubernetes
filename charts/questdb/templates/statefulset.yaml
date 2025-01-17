@@ -55,6 +55,9 @@ spec:
           - name: {{ include "questdb.fullname" . }}
             mountPath: {{ .Values.questdb.dataDir }}/.checkpoint
             subPath: .checkpoint/
+          - name: {{ include "questdb.fullname" . }}
+            mountPath: {{ .Values.questdb.dataDir }}/snapshot
+            subPath: snapshot/
           {{- if .Values.questdb.serverConfig.enabled }}
           - name: server-config
             mountPath: {{ .Values.questdb.dataDir }}/conf/server.conf

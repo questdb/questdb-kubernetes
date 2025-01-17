@@ -18,6 +18,8 @@ data:
       # Ensure the destination directory exists
       mkdir -p "$DEST_DIR"
 
+      ls -lah $SOURCE_DIR
+
       # Check if the specific file exists
       if [[ -f "$SOURCE_DIR/$MARKER" ]]; then
           echo "File '$MARKER' found. Moving contents of $SOURCE_DIR to $DEST_DIR."
