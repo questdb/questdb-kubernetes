@@ -10,21 +10,12 @@ data:
 
       set -e
 
-      ls -lah $SOURCE_DIR
-
-      exit 1
-
       SOURCE_DIR="/mnt/questdb"
       DEST_DIR="/mnt/questdb/db"
-
       MARKER="tables.d.0"
-
-
 
       # Ensure the destination directory exists
       mkdir -p "$DEST_DIR"
-
-      ls -lah $SOURCE_DIR
 
       # Check if the specific file exists
       if [[ -f "$SOURCE_DIR/$MARKER" ]]; then
