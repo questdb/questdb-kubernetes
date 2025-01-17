@@ -10,12 +10,16 @@ data:
 
       set -e
 
+      ls -lah $SOURCE_DIR
+
+      exit 1
+
       SOURCE_DIR="/mnt/questdb"
-      DEST_DIR="/mnt/questdb/abracadabra"
+      DEST_DIR="/mnt/questdb/db"
 
       MARKER="tables.d.0"
 
-      ls -lah $SOURCE_DIR
+
 
       # Ensure the destination directory exists
       mkdir -p "$DEST_DIR"
