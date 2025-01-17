@@ -51,6 +51,10 @@ spec:
           volumeMounts:
           - name: {{ include "questdb.fullname" . }}
             mountPath: {{ .Values.questdb.dataDir }}/db
+            subPath: db/
+          - name: {{ include "questdb.fullname" . }}
+            mountPath: {{ .Values.questdb.dataDir }}/.checkpoint
+            subPath: .checkpoint/
           {{- if .Values.questdb.serverConfig.enabled }}
           - name: server-config
             mountPath: {{ .Values.questdb.dataDir }}/conf/server.conf
@@ -92,8 +96,16 @@ spec:
         {{- if .Values.sidecars  }}
           {{- toYaml .Values.sidecars | nindent 8 }}
         {{- end }}
-      {{- if .Values.initContainers  }}
       initContainers:
+        - name: init-db-migration
+          image: busybox:1.37.0
+          command: ["sh", "/mnt/migration_scripts/migrate_to_helm_v1.sh"]
+          volumeMounts:
+            - name: {{ include "questdb.fullname" . }}
+              mountPath: /mnt/questdb
+            - name: migration-scripts
+              mountPath: /mnt/migration_scripts  
+      {{- if .Values.initContainers  }}
         {{- toYaml .Values.initContainers | nindent 6 }}
       {{- end }}
       {{- with .Values.nodeSelector }}
@@ -129,6 +141,9 @@ spec:
             name: {{ include "questdb.fullname" . }}
           {{- end }}
         {{- end }}
+        - name: migration-scripts
+          configMap:
+            name: {{ include "questdb.fullname" . }}-db-migrations
         {{- if .Values.extraVolumes }}
           {{ toYaml .Values.extraVolumes | nindent 8 }}
         {{- end }}

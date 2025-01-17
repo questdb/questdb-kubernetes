@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "questdb.fullname" . }}-db-migrations
+  labels:
+    {{- include "questdb.labels" . | nindent 4 }}
+data:
+    migrate_to_helm_v1.sh: |
+      #!/bin/bash
+
+      set -e
+
+      SOURCE_DIR="/mnt/questdb"
+      DEST_DIR="/mnt/questdb/db"
+
+      MARKER="tables.d.0"
+
+      # Ensure the destination directory exists
+      mkdir -p "$DEST_DIR"
+
+      # Check if the specific file exists
+      if [[ -f "$SOURCE_DIR/$MARKER" ]]; then
+          echo "File '$MARKER' found. Moving contents of $SOURCE_DIR to $DEST_DIR."
+          mv "$SOURCE_DIR"/* "$DEST_DIR/"
+          echo "Migrated persistent volume data to be compatible with QuestDB helm chart versions v1+"
+      else
+          echo "File '$MARKER' not found. Nothing to move."
+      fi
+
+      
