@@ -6,7 +6,7 @@ metadata:
     {{- include "questdb.labels" . | nindent 4 }}
 data:
     migrate_to_helm_v1.sh: |
-      #!/bin/bash
+      #!/bin/sh
 
       set -e
 
