@@ -101,7 +101,7 @@ spec:
         {{- end }}
       initContainers:
         - name: init-db-migration
-          image: busybox:1.37.0
+          image: debian:bookworm-slim
           command: ["sh", "/mnt/migration_scripts/migrate_to_helm_v1.sh"]
           volumeMounts:
             - name: {{ include "questdb.fullname" . }}
