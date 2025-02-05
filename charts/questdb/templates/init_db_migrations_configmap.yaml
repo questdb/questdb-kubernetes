@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "questdb.fullname" . }}-db-migrations
+  labels:
+    {{- include "questdb.labels" . | nindent 4 }}
+data:
+    migrate_to_helm_v1.sh: |
+      #!/bin/bash
+
+      set -e 
+      shopt -s extglob
+
+      SOURCE_DIR="/mnt/questdb"
+      DEST_DIR="db"
+      TEMP_DIR="db_helm_migration_1_tmp_$(date +"%Y%m%d%H%M%S")"
+      MARKER="tables.d.0"
+
+      cd $SOURCE_DIR
+
+      if [[ ! -e $MARKER ]] ; then
+        echo "File '$MARKER' not found. Nothing to move."
+        exit 0
+      fi
+
+      # If the db dir already exists, move its contents to a temp dir
+      if [[ -e $DEST_DIR ]]; then
+        
+        # Check that the temp dir does not already exist. This is highly 
+        # unlikely and we fail if this is the case
+        if [[ -e $TEMP_DIR ]]; then
+          echo "$TEMP_DIR exists! exiting data migration"
+          exit 1
+        fi 
+
+        # Move the existing db dir to the temp location
+        mv "$DEST_DIR" "$TEMP_DIR"
+
+      fi
+ 
+      # Make the target db dir
+      mkdir $DEST_DIR
+
+      # Move all regular files into the db dir
+      mv !($DEST_DIR) $DEST_DIR
+
+      # Move any hidden files
+      mv .[^.]* "$DEST_DIR/" 2>/dev/null || true
+
+      # Check if the temp dir exists in the new location, if so, move it back to db/db
+      if [[ -d "$DEST_DIR/$TEMP_DIR" ]]; then
+        mv $DEST_DIR/$TEMP_DIR $DEST_DIR/$DEST_DIR
+      fi
+
+      echo "Migration complete!"
+
