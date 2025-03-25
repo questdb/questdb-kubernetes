@@ -100,7 +100,7 @@ spec:
           {{- toYaml .Values.sidecars | nindent 8 }}
         {{- end }}
       initContainers:
-        - name: init-db-migration
+        - name: "{{ .Values.dataMigration.image }}"
           image: debian:bookworm-slim
           command: ["bash", "/mnt/migration_scripts/migrate_to_helm_v1.sh"]
           volumeMounts:
@@ -108,6 +108,10 @@ spec:
               mountPath: /mnt/questdb
             - name: migration-scripts
               mountPath: /mnt/migration_scripts  
+      {{- if .Values.dataMigration.resources }}
+          resources:
+            {{- toYaml .Values.dataMigration.resources | nindent 12}}
+      {{- end }}
       {{- if .Values.initContainers  }}
         {{- toYaml .Values.initContainers | nindent 6 }}
       {{- end }}

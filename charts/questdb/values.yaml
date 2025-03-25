@@ -111,3 +111,11 @@ serviceAccount:
   # if create is set to "true", you can specify the name of that service account below
   # if create is set to "false", you can use this to reference an existing service account for the StatefulSet pod
   # name: custom-service-account-name
+
+dataMigration:
+  image: "debian:bookworm-slim"
+  resources:
+    requests:
+      memory: "256Mi"
+    limits:
+      memory: "1Gi"
