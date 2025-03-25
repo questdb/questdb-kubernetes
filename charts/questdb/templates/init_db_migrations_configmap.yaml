@@ -14,11 +14,11 @@ data:
       SOURCE_DIR="/mnt/questdb"
       DEST_DIR="db"
       TEMP_DIR="db_helm_migration_1_tmp_$(date +"%Y%m%d%H%M%S")"
-      MARKER="tables.d.0"
+      MARKER="tables.d.*"
 
       cd $SOURCE_DIR
 
-      if [[ ! -e $MARKER ]] ; then
+      if [[ -z $(ls $MARKER 2>/dev/null) ]] ; then
         echo "File '$MARKER' not found. Nothing to move."
         exit 0
       fi
