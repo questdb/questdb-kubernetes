@@ -6,7 +6,7 @@ description: Run QuestDB on Kubernetes via Helm
 icon: https://questdb.com/img/favicon.png
 home: https://questdb.com
 sources:
-  - https://github.com/questdb/questdb-kubernetes
+  - https://helm.questdb.io/
 type: application
 keywords:
   - questdb
@@ -16,6 +16,3 @@ keywords:
 maintainers:
 - email: containers@questdb.com
   name: QuestDB Team
-
-# Chart.yaml reference:
-# https://helm.sh/docs/topics/charts/#the-chart-yaml-file
