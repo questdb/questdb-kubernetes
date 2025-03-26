@@ -101,13 +101,13 @@ spec:
         {{- end }}
       initContainers:
         - name: init-db-migration
-          image: "{{ .Values.dataMigration.image }}"
+          image: "{{ .Values.dataMigration.image.repository }}:{{ .Values.dataMigration.image.tag }}"
           command: ["bash", "/mnt/migration_scripts/migrate_to_helm_v1.sh"]
           volumeMounts:
             - name: {{ include "questdb.fullname" . }}
               mountPath: /mnt/questdb
             - name: migration-scripts
-              mountPath: /mnt/migration_scripts  
+              mountPath: /mnt/migration_scripts
       {{- if .Values.dataMigration.resources }}
           resources:
             {{- toYaml .Values.dataMigration.resources | nindent 12}}

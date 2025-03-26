@@ -113,7 +113,10 @@ serviceAccount:
   # name: custom-service-account-name
 
 dataMigration:
-  image: "debian:bookworm-slim"
+  image:
+    repository: debian
+    pullPolicy: IfNotPresent
+    tag: 12.10-slim
   resources:
     requests:
       memory: "256Mi"
