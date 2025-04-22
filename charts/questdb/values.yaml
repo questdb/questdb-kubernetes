@@ -18,9 +18,8 @@ questdb:
   dataDir: /var/lib/questdb
   configStorageType: ConfigMap
   serverConfig:
-    enabled: true
-    options:
-      shared.worker.count: 2
+    enabled: false
+    options: {}
   loggingConfig:
     enabled: false
     options: {}
