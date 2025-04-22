@@ -113,7 +113,7 @@ spec:
             {{- toYaml .Values.dataMigration.resources | nindent 12}}
       {{- end }}
       {{- if .Values.initContainers  }}
-        {{- toYaml .Values.initContainers | nindent 6 }}
+        {{- toYaml .Values.initContainers | nindent 8 }}
       {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
