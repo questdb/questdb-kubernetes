@@ -8,8 +8,24 @@ nameOverride: ""
 fullnameOverride: ""
 
 podAnnotations: {}
-podSecurityContext: {}
-securityContext: {}
+podSecurityContext:
+  fsGroup: 10001
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  readOnlyRootFilesystem: true
+  capabilities:
+    drop:
+    - ALL
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  privileged: false
+  allowPrivilegeEscalation: false
+  seccompProfile:
+    type: RuntimeDefault
+
 extraVolumes: []
 extraVolumeMounts: []
 extraLabels: {}
@@ -94,6 +110,7 @@ livenessProbe: {}
   # successThreshold: 1
   # timeoutSeconds: 2
 
+automountServiceAccountToken: false
 
 metrics:
   enabled: true
@@ -106,6 +123,7 @@ serviceAccount:
   create: false
   labels: {}
   annotations: {}
+  automountServiceAccountToken: false
 
   # if create is set to "true", you can specify the name of that service account below
   # if create is set to "false", you can use this to reference an existing service account for the StatefulSet pod
