@@ -79,3 +79,45 @@ Generate log.conf file content
 {{ $key }} = {{ $value }}
 {{- end }}
 {{- end }}
+
+{{/*
+Build openshift detection
+*/}}
+{{- define "isOpenshiftEnabled" -}}
+{{- $openshiftEnabledString := (.Values.openshift).enabled | toString -}}
+{{- if eq $openshiftEnabledString "true" -}}
+true
+{{- else if and (eq $openshiftEnabledString "detect") (.Capabilities.APIVersions.Has "security.openshift.io/v1") }}
+true
+{{- end }}
+{{- end }}
+
+{{/*
+Build securityContext
+*/}}
+{{- define "generateSecurityContext" -}}
+{{- $context := .Values.securityContext -}}
+{{- if $context -}}
+{{- if (include "isOpenshiftEnabled" .) -}}
+{{- $context = omit $context "runAsUser" "runAsGroup" "fsGroup" -}}
+{{- end -}}
+{{- else -}}
+{{ $context = dict -}}
+{{- end -}}
+{{ $context | toYaml }}
+{{- end }}
+
+{{/*
+Build podSecurityContext
+*/}}
+{{- define "generatePodSecurityContext" -}}
+{{- $context := .Values.podSecurityContext -}}
+{{- if $context -}}
+{{- if (include "isOpenshiftEnabled" .) -}}
+{{- $context = omit $context "runAsUser" "runAsGroup" "fsGroup" -}}
+{{- end -}}
+{{- else -}}
+{{ $context = dict -}}
+{{- end -}}
+{{ $context | toYaml }}
+{{- end }}
