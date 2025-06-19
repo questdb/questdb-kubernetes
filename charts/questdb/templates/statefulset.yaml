@@ -52,8 +52,10 @@ spec:
           volumeMounts:
           - name: tmpfs-tmp
             mountPath: /tmp
-          - name: tmpfs-questdb
-            mountPath: /var/lib/questdb
+          - name: tmpfs-questdb-import
+            mountPath: /var/lib/questdb/import
+          - name: tmpfs-questdb-public
+            mountPath: /var/lib/questdb/public
           - name: {{ include "questdb.fullname" . }}
             mountPath: {{ .Values.questdb.dataDir }}/db
             subPath: db/
@@ -72,6 +74,11 @@ spec:
           - name: logging-config
             mountPath: {{ .Values.questdb.dataDir }}/conf/log.conf
             subPath: log.conf
+          {{- end }}
+          {{- if .Values.questdb.mimeConfig.enabled }}
+          - name: mime-config
+            mountPath: {{ .Values.questdb.dataDir }}/conf/mime.types
+            subPath: mime.types
           {{- end }}
           {{- if .Values.extraVolumeMounts }}
             {{ toYaml .Values.extraVolumeMounts | nindent 10 }}
@@ -137,7 +144,9 @@ spec:
       volumes:
         - name: tmpfs-tmp
           emptyDir: {}
-        - name: tmpfs-questdb
+        - name: tmpfs-questdb-import
+          emptyDir: {}
+        - name: tmpfs-questdb-public
           emptyDir: {}
         {{- if .Values.questdb.serverConfig.enabled }}
         - name: server-config
@@ -151,6 +160,16 @@ spec:
         {{- end }}
         {{- if .Values.questdb.loggingConfig.enabled }}
         - name: logging-config
+          {{- if eq .Values.questdb.configStorageType "Secret" }}
+          secret:
+              secretName: {{ include "questdb.fullname" . }}
+          {{- else }}
+          configMap:
+            name: {{ include "questdb.fullname" . }}
+          {{- end }}
+        {{- end }}
+        {{- if .Values.questdb.mimeConfig.enabled }}
+        - name: mime-config
           {{- if eq .Values.questdb.configStorageType "Secret" }}
           secret:
               secretName: {{ include "questdb.fullname" . }}
