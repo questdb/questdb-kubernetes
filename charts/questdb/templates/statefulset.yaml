@@ -68,6 +68,11 @@ spec:
             mountPath: {{ .Values.questdb.dataDir }}/conf/log.conf
             subPath: log.conf
           {{- end }}
+          {{- if .Values.questdb.mimeConfig.enabled }}
+          - name: mime-config
+            mountPath: {{ .Values.questdb.dataDir }}/conf/mime.types
+            subPath: mime.types
+          {{- end }}
           {{- if .Values.extraVolumeMounts }}
             {{ toYaml .Values.extraVolumeMounts | nindent 10 }}
           {{- end }}
@@ -140,6 +145,16 @@ spec:
         {{- end }}
         {{- if .Values.questdb.loggingConfig.enabled }}
         - name: logging-config
+          {{- if eq .Values.questdb.configStorageType "Secret" }}
+          secret:
+              secretName: {{ include "questdb.fullname" . }}
+          {{- else }}
+          configMap:
+            name: {{ include "questdb.fullname" . }}
+          {{- end }}
+        {{- end }}
+        {{- if .Values.questdb.mimeConfig.enabled }}
+        - name: mime-config
           {{- if eq .Values.questdb.configStorageType "Secret" }}
           secret:
               secretName: {{ include "questdb.fullname" . }}

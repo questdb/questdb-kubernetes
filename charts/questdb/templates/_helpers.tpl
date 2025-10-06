@@ -79,3 +79,12 @@ Generate log.conf file content
 {{ $key }} = {{ $value }}
 {{- end }}
 {{- end }}
+
+{{/*
+Generate mime.types file content
+*/}}
+{{- define "generateMimeConfig" -}}
+{{- range $key, $value := index .Values.questdb.mimeConfig.options }}
+{{ $key }}   {{ $value }}
+{{- end }}
+{{- end }}

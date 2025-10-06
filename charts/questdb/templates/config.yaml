@@ -18,6 +18,9 @@ data:
   {{- if .Values.questdb.loggingConfig.enabled }}
   log.conf: {{ include "generateLogConfig" . | b64enc -}}
   {{- end }}
+  {{- if .Values.questdb.mimeConfig.enabled }}
+  mime.types: {{ include "generateMimeConfig" . | b64enc -}}
+  {{- end }}
 {{- else }}
 data:
   {{- if .Values.questdb.serverConfig.enabled }}
@@ -27,6 +30,10 @@ data:
   {{- if .Values.questdb.loggingConfig.enabled }}
   log.conf: |
     {{- include "generateLogConfig" . | nindent 4 -}}
+  {{- end }}
+  {{- if .Values.questdb.mimeConfig.enabled }}
+  mime.types: |
+    {{- include "generateMimeConfig" . | nindent 4 -}}
   {{- end }}
 {{- end }}
 {{- end }}
