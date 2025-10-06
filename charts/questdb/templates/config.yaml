@@ -1,4 +1,4 @@
-{{- if or .Values.questdb.serverConfig.enabled .Values.questdb.loggingConfig.enabled -}}
+{{- if or .Values.questdb.serverConfig.enabled .Values.questdb.loggingConfig.enabled .Values.questdb.mimeConfig.enabled -}}
 apiVersion: v1
 {{- if eq .Values.questdb.configStorageType "Secret" }}
 kind: Secret
