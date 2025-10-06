@@ -94,6 +94,7 @@ livenessProbe: {}
   # successThreshold: 1
   # timeoutSeconds: 2
 
+automountServiceAccountToken: false
 
 metrics:
   enabled: true
@@ -106,6 +107,7 @@ serviceAccount:
   create: false
   labels: {}
   annotations: {}
+  automountServiceAccountToken: false
 
   # if create is set to "true", you can specify the name of that service account below
   # if create is set to "false", you can use this to reference an existing service account for the StatefulSet pod
