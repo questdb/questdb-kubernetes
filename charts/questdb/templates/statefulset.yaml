@@ -50,14 +50,7 @@ spec:
           {{- end }}
           volumeMounts:
           - name: {{ include "questdb.fullname" . }}
-            mountPath: {{ .Values.questdb.dataDir }}/db
-            subPath: db/
-          - name: {{ include "questdb.fullname" . }}
-            mountPath: {{ .Values.questdb.dataDir }}/.checkpoint
-            subPath: .checkpoint/
-          - name: {{ include "questdb.fullname" . }}
-            mountPath: {{ .Values.questdb.dataDir }}/snapshot
-            subPath: snapshot/
+            mountPath: {{ .Values.questdb.dataDir }}
           {{- if .Values.questdb.serverConfig.enabled }}
           - name: server-config
             mountPath: {{ .Values.questdb.dataDir }}/conf/server.conf
