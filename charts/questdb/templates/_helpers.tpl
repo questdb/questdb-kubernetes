@@ -81,6 +81,14 @@ Generate log.conf file content
 {{- end }}
 
 {{/*
+Generate mime.types file content
+*/}}
+{{- define "generateMimeConfig" -}}
+{{- range $key, $value := index .Values.questdb.mimeConfig.options }}
+{{ $key }}   {{ $value }}
+{{- end }}
+{{- end }}
+
 Build openshift detection
 */}}
 {{- define "isOpenshiftEnabled" -}}

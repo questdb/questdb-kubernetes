@@ -1,4 +1,4 @@
-{{- if or .Values.questdb.serverConfig.enabled .Values.questdb.loggingConfig.enabled -}}
+{{- if or .Values.questdb.serverConfig.enabled .Values.questdb.loggingConfig.enabled .Values.questdb.mimeConfig.enabled -}}
 apiVersion: v1
 {{- if eq .Values.questdb.configStorageType "Secret" }}
 kind: Secret
@@ -18,6 +18,9 @@ data:
   {{- if .Values.questdb.loggingConfig.enabled }}
   log.conf: {{ include "generateLogConfig" . | b64enc -}}
   {{- end }}
+  {{- if .Values.questdb.mimeConfig.enabled }}
+  mime.types: {{ include "generateMimeConfig" . | b64enc -}}
+  {{- end }}
 {{- else }}
 data:
   {{- if .Values.questdb.serverConfig.enabled }}
@@ -27,6 +30,10 @@ data:
   {{- if .Values.questdb.loggingConfig.enabled }}
   log.conf: |
     {{- include "generateLogConfig" . | nindent 4 -}}
+  {{- end }}
+  {{- if .Values.questdb.mimeConfig.enabled }}
+  mime.types: |
+    {{- include "generateMimeConfig" . | nindent 4 -}}
   {{- end }}
 {{- end }}
 {{- end }}
