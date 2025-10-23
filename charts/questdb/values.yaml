@@ -14,6 +14,7 @@ podSecurityContext:
     type: RuntimeDefault
 
 securityContext:
+  readOnlyRootFilesystem: true
   capabilities:
     drop:
     - ALL
@@ -141,6 +142,17 @@ dataMigration:
       memory: "256Mi"
     limits:
       memory: "1Gi"
+
+configPrep:
+  image:
+    repository: debian
+    pullPolicy: IfNotPresent
+    tag: 12.10-slim
+  resources:
+    requests:
+      memory: "256Mi"
+    limits:
+      memory: "256Mi"
 
 # openshift
 openshift:

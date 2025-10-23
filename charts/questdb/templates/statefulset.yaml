@@ -50,23 +50,16 @@ spec:
             {{ toYaml .Values.questdb.envFrom | nindent 10 }}
           {{- end }}
           volumeMounts:
+          - name: tmpfs-tmp
+            mountPath: /tmp
+          - name: tmpfs-questdb-import
+            mountPath: /var/lib/questdb/import
+          - name: tmpfs-questdb-public
+            mountPath: /var/lib/questdb/public
           - name: {{ include "questdb.fullname" . }}
             mountPath: {{ .Values.questdb.dataDir }}
-          {{- if .Values.questdb.serverConfig.enabled }}
-          - name: server-config
-            mountPath: {{ .Values.questdb.dataDir }}/conf/server.conf
-            subPath: server.conf
-          {{- end }}
-          {{- if .Values.questdb.loggingConfig.enabled }}
-          - name: logging-config
-            mountPath: {{ .Values.questdb.dataDir }}/conf/log.conf
-            subPath: log.conf
-          {{- end }}
-          {{- if .Values.questdb.mimeConfig.enabled }}
-          - name: mime-config
-            mountPath: {{ .Values.questdb.dataDir }}/conf/mime.types
-            subPath: mime.types
-          {{- end }}
+          - name: config-mount
+            mountPath: {{ .Values.questdb.dataDir }}/conf
           {{- if .Values.extraVolumeMounts }}
             {{ toYaml .Values.extraVolumeMounts | nindent 10 }}
           {{- end }}
@@ -99,6 +92,35 @@ spec:
           {{- toYaml .Values.sidecars | nindent 8 }}
         {{- end }}
       initContainers:
+        - name: init-config-prep
+          image: "{{ .Values.configPrep.image.repository }}:{{ .Values.configPrep.image.tag }}"
+          command: ["bash", "/mnt/prep_scripts/prepare_config.sh", "{{ .Values.questdb.dataDir }}"]
+          securityContext:
+            {{- include "generateSecurityContext" . | nindent 12 }}
+          volumeMounts:
+            - name: prep-scripts
+              mountPath: /mnt/prep_scripts
+            - name: config-mount
+              mountPath: {{ .Values.questdb.dataDir }}/merged_conf
+          {{- if .Values.questdb.serverConfig.enabled }}
+            - name: server-config
+              mountPath: {{ .Values.questdb.dataDir }}/override_conf/server.conf
+              subPath: server.conf
+          {{- end }}
+          {{- if .Values.questdb.loggingConfig.enabled }}
+            - name: logging-config
+              mountPath: {{ .Values.questdb.dataDir }}/override_conf/log.conf
+              subPath: log.conf
+          {{- end }}
+          {{- if .Values.questdb.mimeConfig.enabled }}
+            - name: mime-config
+              mountPath: {{ .Values.questdb.dataDir }}/override_conf/mime.types
+              subPath: mime.types
+          {{- end }}
+        {{- if .Values.configPrep.resources }}
+          resources:
+            {{- toYaml .Values.configPrep.resources | nindent 12}}
+        {{- end }}
         - name: init-db-migration
           image: "{{ .Values.dataMigration.image.repository }}:{{ .Values.dataMigration.image.tag }}"
           command: ["bash", "/mnt/migration_scripts/migrate_to_helm_v1.sh"]
@@ -129,6 +151,17 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       volumes:
+        - name: tmpfs-tmp
+          emptyDir: {}
+        - name: tmpfs-questdb-import
+          emptyDir: {}
+        - name: tmpfs-questdb-public
+          emptyDir: {}
+        - name: config-mount
+          emptyDir: {}
+        - name: prep-scripts
+          configMap:
+            name: {{ include "questdb.fullname" . }}-config-scripts
         {{- if .Values.questdb.serverConfig.enabled }}
         - name: server-config
           {{- if eq .Values.questdb.configStorageType "Secret" }}
