@@ -29,14 +29,15 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       securityContext:
-        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+        {{- include "generatePodSecurityContext" . | nindent 8 }}
       {{- if or .Values.serviceAccount.create .Values.serviceAccount.name }}
       serviceAccountName: {{ include "questdb.serviceAccountName" . }}
       {{- end }}
+      automountServiceAccountToken: {{ .Values.automountServiceAccountToken }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
-            {{- toYaml .Values.securityContext | nindent 12 }}
+            {{- include "generateSecurityContext" . | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           env:
@@ -50,14 +51,7 @@ spec:
           {{- end }}
           volumeMounts:
           - name: {{ include "questdb.fullname" . }}
-            mountPath: {{ .Values.questdb.dataDir }}/db
-            subPath: db/
-          - name: {{ include "questdb.fullname" . }}
-            mountPath: {{ .Values.questdb.dataDir }}/.checkpoint
-            subPath: .checkpoint/
-          - name: {{ include "questdb.fullname" . }}
-            mountPath: {{ .Values.questdb.dataDir }}/snapshot
-            subPath: snapshot/
+            mountPath: {{ .Values.questdb.dataDir }}
           {{- if .Values.questdb.serverConfig.enabled }}
           - name: server-config
             mountPath: {{ .Values.questdb.dataDir }}/conf/server.conf
@@ -108,6 +102,8 @@ spec:
         - name: init-db-migration
           image: "{{ .Values.dataMigration.image.repository }}:{{ .Values.dataMigration.image.tag }}"
           command: ["bash", "/mnt/migration_scripts/migrate_to_helm_v1.sh"]
+          securityContext:
+            {{- include "generateSecurityContext" . | nindent 12 }}
           volumeMounts:
             - name: {{ include "questdb.fullname" . }}
               mountPath: /mnt/questdb
