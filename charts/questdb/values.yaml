@@ -8,8 +8,23 @@ nameOverride: ""
 fullnameOverride: ""
 
 podAnnotations: {}
-podSecurityContext: {}
-securityContext: {}
+podSecurityContext:
+  fsGroup: 10001
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  capabilities:
+    drop:
+    - ALL
+  runAsNonRoot: true
+  runAsUser: 10001
+  runAsGroup: 10001
+  privileged: false
+  allowPrivilegeEscalation: false
+  seccompProfile:
+    type: RuntimeDefault
+
 extraVolumes: []
 extraVolumeMounts: []
 extraLabels: {}
@@ -121,3 +136,7 @@ dataMigration:
       memory: "256Mi"
     limits:
       memory: "1Gi"
+
+# openshift
+openshift:
+  enabled: detect
