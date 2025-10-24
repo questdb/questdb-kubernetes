@@ -89,6 +89,7 @@ Generate mime.types file content
 {{- end }}
 {{- end }}
 
+{{/*
 Build openshift detection
 */}}
 {{- define "isOpenshiftEnabled" -}}
