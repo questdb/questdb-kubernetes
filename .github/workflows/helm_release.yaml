@@ -1,0 +1,35 @@
+# from https://github.com/wkbrd/docker-registry.helm/blob/main/.github/workflows/helm_release.yaml
+# Apache 2 License
+
+name: Release Charts
+env:
+  HELM_VERSION_TO_INSTALL: 3.14.0
+  GCR_IMAGE: ghcr.io/${{ github.repository_owner }}
+  
+on:
+  workflow_dispatch:
+
+jobs:
+  release:
+    permissions:
+      contents: write
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: install helm
+        uses: Azure/setup-helm@v4.2.0
+        with:
+          # Version of helm
+          version: ${{ env.HELM_VERSION_TO_INSTALL }} # default is latest
+
+      - name: publish to oci registry
+        run: |
+          echo ${{ secrets.GITHUB_TOKEN }} | helm registry login ghcr.io --username ${{ github.repository_owner }} --password-stdin
+          helm package "${{ github.workspace }}/charts/questdb/"
+          package=`ls -t questdb-*.tgz | head -n 1`
+          helm push "${package}" oci://${{ env.GCR_IMAGE }}
