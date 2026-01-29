@@ -41,6 +41,20 @@ questdb:
   mimeConfig:
     enabled: false
     options: {}
+  # secretFiles mounts Kubernetes Secrets as files for QuestDB's _FILE config convention.
+  # Each entry creates a volume mount at /run/secrets/<secretKey> and sets the corresponding
+  # _FILE environment variable automatically. Requires QuestDB with file-based secret support.
+  secretFiles: []
+  # Example:
+  # - secretName: my-questdb-secrets   # Name of the Kubernetes Secret
+  #   secretKey: pg-password            # Key within the Secret
+  #   property: pg.password             # QuestDB config property name
+  # - secretName: my-questdb-secrets
+  #   secretKey: pg-readonly-password
+  #   property: pg.readonly.password
+  # - secretName: my-questdb-secrets
+  #   secretKey: http-password
+  #   property: http.password
   # env supports key/value pairs that are added directly to the questdb statefulset's env
   env: {}
   # envFrom supports a list of sources that will be injected into the questdb statefulset's env
