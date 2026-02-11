@@ -6,6 +6,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "questdb.fullname" . }}
+  namespace: {{ .Release.Namespace | quote }}
   labels:
     {{- include "questdb.labels" . | nindent 4 }}
   {{- with .Values.service.annotations }}
