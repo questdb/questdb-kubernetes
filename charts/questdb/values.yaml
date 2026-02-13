@@ -1,29 +1,15 @@
 image:
   repository: questdb/questdb
   pullPolicy: IfNotPresent
-  tag: 9.1.0
+  tag: 9.3.2
 
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
 podAnnotations: {}
-podSecurityContext:
-  fsGroup: 10001
-  seccompProfile:
-    type: RuntimeDefault
-
-securityContext:
-  capabilities:
-    drop:
-    - ALL
-  runAsNonRoot: true
-  runAsUser: 10001
-  runAsGroup: 10001
-  privileged: false
-  allowPrivilegeEscalation: false
-  seccompProfile:
-    type: RuntimeDefault
+podSecurityContext: {}
+securityContext: {}
 
 extraVolumes: []
 extraVolumeMounts: []
