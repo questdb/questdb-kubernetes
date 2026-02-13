@@ -93,7 +93,7 @@ Generate mime.types file content
 Convert a QuestDB property name to its _FILE environment variable name.
 Example: "pg.password" -> "QDB_PG_PASSWORD_FILE"
 */}}
-{{- define "questdb.propertyToEnvVar" -}}
+{{- define "questdb.secretFileEnvVar" -}}
 QDB_{{ . | upper | replace "." "_" }}_FILE
 {{- end }}
 

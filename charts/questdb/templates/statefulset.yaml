@@ -47,7 +47,7 @@ spec:
               value: "{{ $value }}"
           {{- end }}
           {{- range .Values.questdb.secretFiles }}
-            - name: {{ include "questdb.propertyToEnvVar" .property }}
+            - name: {{ include "questdb.secretFileEnvVar" .property }}
               value: "/run/secrets/{{ .secretKey }}"
           {{- end }}
           {{- if .Values.questdb.envFrom }}
