@@ -46,6 +46,10 @@ spec:
             - name: {{ $key }}
               value: "{{ $value }}"
           {{- end }}
+          {{- range .Values.questdb.secretFiles }}
+            - name: {{ include "questdb.secretFileEnvVar" .property }}
+              value: "/run/secrets/{{ .secretKey }}"
+          {{- end }}
           {{- if .Values.questdb.envFrom }}
           envFrom:
             {{ toYaml .Values.questdb.envFrom | nindent 10 }}
@@ -67,6 +71,12 @@ spec:
           - name: mime-config
             mountPath: {{ .Values.questdb.dataDir }}/conf/mime.types
             subPath: mime.types
+          {{- end }}
+          {{- range .Values.questdb.secretFiles }}
+          - name: secret-{{ .secretKey }}
+            mountPath: /run/secrets/{{ .secretKey }}
+            subPath: {{ .secretKey }}
+            readOnly: true
           {{- end }}
           {{- if .Values.extraVolumeMounts }}
             {{ toYaml .Values.extraVolumeMounts | nindent 10 }}
@@ -159,6 +169,11 @@ spec:
           configMap:
             name: {{ include "questdb.fullname" . }}
           {{- end }}
+        {{- end }}
+        {{- range .Values.questdb.secretFiles }}
+        - name: secret-{{ .secretKey }}
+          secret:
+            secretName: {{ .secretName }}
         {{- end }}
         - name: migration-scripts
           configMap:
