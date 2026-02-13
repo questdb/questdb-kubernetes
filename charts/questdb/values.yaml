@@ -38,7 +38,7 @@ questdb:
   # - secretName: my-questdb-secrets
   #   secretKey: http-password
   #   property: http.password
-  # Example (Enterprise):
+  # Example (Enterprise - requires acl.enabled=true, which is the default):
   # - secretName: my-questdb-secrets
   #   secretKey: admin-password
   #   property: acl.admin.password
