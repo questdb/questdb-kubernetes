@@ -134,9 +134,9 @@ serviceAccount:
 
 dataMigration:
   image:
-    repository: debian
+    repository: alpine
     pullPolicy: IfNotPresent
-    tag: 12.10-slim
+    tag: "3.21"
   resources:
     requests:
       memory: "256Mi"
