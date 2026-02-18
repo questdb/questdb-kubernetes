@@ -16,7 +16,7 @@ data:
       TEMP_DIR="db_helm_migration_1_tmp_$(date +"%Y%m%d%H%M%S")"
       MARKER="tables.d.*"
 
-      cd $SOURCE_DIR
+      cd "$SOURCE_DIR"
 
       if [ -z "$(ls $MARKER 2>/dev/null)" ] ; then
         echo "File '$MARKER' not found. Nothing to move."
@@ -42,10 +42,16 @@ data:
       mkdir "$DEST_DIR"
 
       # Move all visible files and dirs (except db) into the db dir
-      find . -maxdepth 1 ! -name '.' ! -name "$DEST_DIR" ! -name '.*' -exec mv {} "$DEST_DIR/" \;
+      for item in ./* ; do
+        [ "$(basename "$item")" = "$DEST_DIR" ] && continue
+        mv "$item" "$DEST_DIR/"
+      done
 
       # Move any hidden files
-      find . -maxdepth 1 -name '.*' ! -name '.' ! -name '..' -exec mv {} "$DEST_DIR/" \;
+      for item in ./.[!.]* ./..?* ; do
+        [ -e "$item" ] || continue
+        mv "$item" "$DEST_DIR/"
+      done
 
       # Check if the temp dir exists in the new location, if so, move it back to db/db
       if [ -d "$DEST_DIR/$TEMP_DIR" ]; then
