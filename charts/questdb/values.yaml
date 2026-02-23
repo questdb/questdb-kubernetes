@@ -136,7 +136,7 @@ dataMigration:
   image:
     repository: alpine
     pullPolicy: IfNotPresent
-    tag: "3.21"
+    tag: "3.23"
   resources:
     requests:
       memory: "256Mi"
