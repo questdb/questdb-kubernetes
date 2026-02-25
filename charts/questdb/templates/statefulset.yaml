@@ -112,7 +112,7 @@ spec:
       initContainers:
         - name: init-db-migration
           image: "{{ .Values.dataMigration.image.repository }}:{{ .Values.dataMigration.image.tag }}"
-          command: ["bash", "/mnt/migration_scripts/migrate_to_helm_v1.sh"]
+          command: ["sh", "/mnt/migration_scripts/migrate_to_helm_v1.sh"]
           securityContext:
             {{- include "generateSecurityContext" . | nindent 12 }}
           volumeMounts:
