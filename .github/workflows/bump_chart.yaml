@@ -1,0 +1,72 @@
+name: Bump Chart Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      appVersion:
+        description: 'QuestDB version (e.g. 9.3.4)'
+        required: true
+        type: string
+      chartVersion:
+        description: 'Chart version (leave empty to auto-increment patch)'
+        required: false
+        type: string
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Determine chart version
+        id: version
+        run: |
+          APP_VERSION="${{ inputs.appVersion }}"
+          CHART_VERSION="${{ inputs.chartVersion }}"
+
+          if [ -z "$CHART_VERSION" ]; then
+            CURRENT=$(yq '.version' charts/questdb/Chart.yaml)
+            MAJOR=$(echo "$CURRENT" | cut -d. -f1)
+            MINOR=$(echo "$CURRENT" | cut -d. -f2)
+            PATCH=$(echo "$CURRENT" | cut -d. -f3)
+            CHART_VERSION="${MAJOR}.${MINOR}.$((PATCH + 1))"
+          fi
+
+          echo "app_version=$APP_VERSION" >> "$GITHUB_OUTPUT"
+          echo "chart_version=$CHART_VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Update Chart.yaml and values.yaml
+        run: |
+          yq -i '.version = "${{ steps.version.outputs.chart_version }}"' charts/questdb/Chart.yaml
+          yq -i '.appVersion = "${{ steps.version.outputs.app_version }}"' charts/questdb/Chart.yaml
+          yq -i '.image.tag = "${{ steps.version.outputs.app_version }}"' charts/questdb/values.yaml
+
+      - name: Create pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH="chart-update/${{ steps.version.outputs.chart_version }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "$BRANCH"
+          git add charts/questdb/Chart.yaml charts/questdb/values.yaml
+          git commit -m "Bump chart to ${{ steps.version.outputs.chart_version }} (QuestDB ${{ steps.version.outputs.app_version }})"
+          git push origin "$BRANCH"
+          gh pr create \
+            --title "Bump chart to ${{ steps.version.outputs.chart_version }} (QuestDB ${{ steps.version.outputs.app_version }})" \
+            --body "$(cat <<'EOF'
+          ## Summary
+          - Chart version: `${{ steps.version.outputs.chart_version }}`
+          - QuestDB version: `${{ steps.version.outputs.app_version }}`
+
+          After merging, tag to release:
+          ```
+          git tag questdb-${{ steps.version.outputs.chart_version }}
+          git push origin questdb-${{ steps.version.outputs.chart_version }}
+          ```
+          EOF
+          )"
