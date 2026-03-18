@@ -3,6 +3,9 @@ image:
   pullPolicy: IfNotPresent
   tag: 9.3.3
 
+# for advanced scenarios you can overwrite the questdb container command. 
+# For example, you can change the ulimit without having to change it for all the containers in the node by doing the below:
+# command: ['sh', '-c', 'ulimit -Hn 100000000 && ulimit -Sn 100000000 && /docker-entrypoint.sh']
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
