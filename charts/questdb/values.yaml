@@ -146,3 +146,8 @@ dataMigration:
 # openshift
 openshift:
   enabled: detect
+  
+# for advanced scenarios you can overwrite the questdb container command. 
+# For example, you can change the ulimit without having to change it for all the containers in the node by doing the below:
+# command: ['sh', '-c', 'ulimit -Hn 100000000 && ulimit -Sn 100000000 && /docker-entrypoint.sh']
+# Note that in this case, you may also need to modify securityContext for the ulimits to be applied successfully

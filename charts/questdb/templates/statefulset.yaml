@@ -41,6 +41,9 @@ spec:
             {{- include "generateSecurityContext" . | nindent 12 }}
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.command }}
+          command: {{ .Values.command | toYaml | nindent 10 }}
+          {{- end }}
           env:
           {{- range $key, $value := .Values.questdb.env }}
             - name: {{ $key }}
