@@ -66,6 +66,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           REPO_DIR=$(mktemp -d)
+          git fetch origin repo:repo
           git worktree add "$REPO_DIR" repo
 
           mkdir -p "$REPO_DIR/docs"
