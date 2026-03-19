@@ -1,13 +1,19 @@
-# from https://github.com/wkbrd/docker-registry.helm/blob/main/.github/workflows/helm_release.yaml
-# Apache 2 License
-
 name: Release Charts
+
 env:
-  HELM_VERSION_TO_INSTALL: 3.14.0
-  GCR_IMAGE: ghcr.io/${{ github.repository_owner }}
-  
+  HELM_VERSION: "3.14.0"
+  OCI_REGISTRY: ghcr.io/${{ github.repository_owner }}
+  HELM_REPO_URL: https://helm.questdb.io/
+
 on:
+  push:
+    branches: [master]
+    paths: ['charts/questdb/Chart.yaml']
   workflow_dispatch:
+
+concurrency:
+  group: helm-release
+  cancel-in-progress: false
 
 jobs:
   release:
@@ -21,15 +27,57 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: install helm
+      - name: Install yq
+        run: |
+          YQ_VERSION=v4.44.3
+          wget -q "https://github.com/mikefarah/yq/releases/download/${YQ_VERSION}/yq_linux_amd64" -O /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
+
+      - name: Extract version
+        id: version
+        run: |
+          VERSION=$(yq '.version' charts/questdb/Chart.yaml)
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Install Helm
         uses: Azure/setup-helm@v4.2.0
         with:
-          # Version of helm
-          version: ${{ env.HELM_VERSION_TO_INSTALL }} # default is latest
+          version: ${{ env.HELM_VERSION }}
 
-      - name: publish to oci registry
+      - name: Package chart
+        run: helm package charts/questdb/ --destination ./packaged
+
+      - name: Push to OCI registry
         run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | helm registry login ghcr.io --username ${{ github.repository_owner }} --password-stdin
-          helm package "${{ github.workspace }}/charts/questdb/"
-          package=`ls -t questdb-*.tgz | head -n 1`
-          helm push "${package}" oci://${{ env.GCR_IMAGE }}
+          echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io --username "${{ github.repository_owner }}" --password-stdin
+          helm push ./packaged/questdb-${{ steps.version.outputs.version }}.tgz oci://${{ env.OCI_REGISTRY }}
+
+      - name: Update GitHub Pages helm repo
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          REPO_DIR=$(mktemp -d)
+          git fetch origin repo:repo
+          git worktree add "$REPO_DIR" repo
+
+          mkdir -p "$REPO_DIR/docs"
+          cp ./packaged/questdb-${{ steps.version.outputs.version }}.tgz "$REPO_DIR/docs/"
+
+          if [ -f "$REPO_DIR/docs/index.yaml" ]; then
+            helm repo index \
+              --url "${{ env.HELM_REPO_URL }}" \
+              --merge "$REPO_DIR/docs/index.yaml" \
+              ./packaged
+          else
+            helm repo index \
+              --url "${{ env.HELM_REPO_URL }}" \
+              ./packaged
+          fi
+
+          cp ./packaged/index.yaml "$REPO_DIR/docs/index.yaml"
+
+          cd "$REPO_DIR"
+          git add docs/index.yaml "docs/questdb-${{ steps.version.outputs.version }}.tgz"
+          git commit -m "Release chart questdb-${{ steps.version.outputs.version }}"
+          git push origin repo
