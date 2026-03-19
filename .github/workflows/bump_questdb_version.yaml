@@ -12,13 +12,8 @@ on:
         required: false
         type: string
 
-  pull_request:
-    types: [closed]
-    branches: [master]
-
 jobs:
   bump:
-    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -69,33 +64,8 @@ jobs:
           git push origin "$BRANCH"
           gh pr create \
             --title "Bump chart to ${{ steps.version.outputs.chart_version }} (QuestDB ${{ steps.version.outputs.app_version }})" \
-            --body "$(cat <<'EOF'
-          ## Summary
-          - Chart version: `${{ steps.version.outputs.chart_version }}`
-          - QuestDB version: `${{ steps.version.outputs.app_version }}`
+            --body "## Summary
+          - Chart version: \`${{ steps.version.outputs.chart_version }}\`
+          - QuestDB version: \`${{ steps.version.outputs.app_version }}\`
 
-          A tag will be created automatically when this PR is merged.
-          EOF
-          )"
-
-  tag:
-    if: >
-      github.event_name == 'pull_request'
-      && github.event.pull_request.merged == true
-      && startsWith(github.event.pull_request.head.ref, 'chart-update/')
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Create and push tag
-        run: |
-          CHART_VERSION=$(grep '^version:' charts/questdb/Chart.yaml | awk '{print $2}')
-          TAG="questdb-${CHART_VERSION}"
-
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag "$TAG"
-          git push origin "$TAG"
+          Merging will trigger a release to OCI registry and GitHub Pages."
