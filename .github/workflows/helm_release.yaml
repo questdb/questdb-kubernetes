@@ -68,12 +68,19 @@ jobs:
           REPO_DIR=$(mktemp -d)
           git worktree add "$REPO_DIR" repo
 
+          mkdir -p "$REPO_DIR/docs"
           cp ./packaged/questdb-${{ steps.version.outputs.version }}.tgz "$REPO_DIR/docs/"
 
-          helm repo index \
-            --url "${{ env.HELM_REPO_URL }}" \
-            --merge "$REPO_DIR/docs/index.yaml" \
-            ./packaged
+          if [ -f "$REPO_DIR/docs/index.yaml" ]; then
+            helm repo index \
+              --url "${{ env.HELM_REPO_URL }}" \
+              --merge "$REPO_DIR/docs/index.yaml" \
+              ./packaged
+          else
+            helm repo index \
+              --url "${{ env.HELM_REPO_URL }}" \
+              ./packaged
+          fi
 
           cp ./packaged/index.yaml "$REPO_DIR/docs/index.yaml"
 
