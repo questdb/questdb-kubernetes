@@ -1,7 +1,7 @@
 apiVersion: v2
 name: questdb
-version: 1.0.21
-appVersion: 9.3.3
+version: 1.0.22
+appVersion: 9.4.0
 description: Run QuestDB on Kubernetes via Helm
 icon: https://questdb.com/img/favicon.png
 home: https://questdb.com
@@ -14,5 +14,5 @@ keywords:
   - timeseries
   - sql
 maintainers:
-- email: containers@questdb.com
-  name: QuestDB Team
+  - email: containers@questdb.com
+    name: QuestDB Team

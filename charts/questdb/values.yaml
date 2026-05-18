@@ -1,20 +1,16 @@
 image:
   repository: questdb/questdb
   pullPolicy: IfNotPresent
-  tag: 9.3.3
-
+  tag: 9.4.0
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
-
 podAnnotations: {}
 podSecurityContext: {}
 securityContext: {}
-
 extraVolumes: []
 extraVolumeMounts: []
 extraLabels: {}
-
 questdb:
   dataDir: /var/lib/questdb
   configStorageType: ConfigMap
@@ -46,7 +42,6 @@ questdb:
   env: {}
   # envFrom supports a list of sources that will be injected into the questdb statefulset's env
   envFrom: []
-
 service:
   annotations: {}
   type: ClusterIP
@@ -58,7 +53,6 @@ service:
     influxdb:
       enabled: false
       port: 9009
-
 persistence:
   enabled: true
   accessMode: ReadWriteOnce
@@ -71,7 +65,6 @@ persistence:
   # existing pvc needs to be in the namespace where questdb will be deployed
   # if you have problems with aws availability zones use nodeSelector to schedule nodes in the same az as volume
   # existingClaim: PVC_NAME_HERE
-
 ingress:
   enabled: false
   annotations: {}
@@ -85,53 +78,47 @@ ingress:
   #     paths:
   #       - path: /
   #         pathType: ImplementationSpecific
-
 resources: {}
 nodeSelector: {}
 tolerations: []
 affinity: {}
 readinessProbe: {}
-  # Example of readinessProbe
-  # failureThreshold: 3
-  # httpGet:
-  #   path: /status
-  #   port: 9003
-  #   scheme: HTTP
-  # initialDelaySeconds: 5
-  # periodSeconds: 10
-  # successThreshold: 1
-  # timeoutSeconds: 2
+# Example of readinessProbe
+# failureThreshold: 3
+# httpGet:
+#   path: /status
+#   port: 9003
+#   scheme: HTTP
+# initialDelaySeconds: 5
+# periodSeconds: 10
+# successThreshold: 1
+# timeoutSeconds: 2
 livenessProbe: {}
-  # Example of livenessProbe
-  # failureThreshold: 5
-  # httpGet:
-  #   path: /status
-  #   port: 9003
-  #   scheme: HTTP
-  # initialDelaySeconds: 5
-  # periodSeconds: 10
-  # successThreshold: 1
-  # timeoutSeconds: 2
+# Example of livenessProbe
+# failureThreshold: 5
+# httpGet:
+#   path: /status
+#   port: 9003
+#   scheme: HTTP
+# initialDelaySeconds: 5
+# periodSeconds: 10
+# successThreshold: 1
+# timeoutSeconds: 2
 
 automountServiceAccountToken: false
-
 metrics:
   enabled: true
   port: 9003
-
 initContainers: []
 sidecars: []
-
 serviceAccount:
   create: false
   labels: {}
   annotations: {}
   automountServiceAccountToken: false
-
   # if create is set to "true", you can specify the name of that service account below
   # if create is set to "false", you can use this to reference an existing service account for the StatefulSet pod
   # name: custom-service-account-name
-
 dataMigration:
   image:
     repository: debian
@@ -142,11 +129,9 @@ dataMigration:
       memory: "256Mi"
     limits:
       memory: "1Gi"
-
 # openshift
 openshift:
   enabled: detect
-  
 # for advanced scenarios you can overwrite the questdb container command. 
 # For example, you can change the ulimit without having to change it for all the containers in the node by doing the below:
 # command: ['sh', '-c', 'ulimit -Hn 100000000 && ulimit -Sn 100000000 && /docker-entrypoint.sh']
