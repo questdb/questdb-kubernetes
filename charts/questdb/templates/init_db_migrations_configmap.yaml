@@ -19,9 +19,11 @@ data:
       cd "$SOURCE_DIR"
 
       # MARKER is a glob (tables.d.*); it must stay unquoted so the shell
-      # expands it to detect the marker file.
+      # expands it to detect the marker. -d lists each match's own name
+      # rather than a directory's contents, so an (empty) directory match
+      # still registers as "found".
       # shellcheck disable=SC2086
-      if [ -z "$(ls $MARKER 2>/dev/null)" ] ; then
+      if [ -z "$(ls -d $MARKER 2>/dev/null)" ] ; then
         echo "File '$MARKER' not found. Nothing to move."
         exit 0
       fi
