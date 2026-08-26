@@ -40,6 +40,7 @@ You can find our Helm charts distributed on:
 
 - [Artifact Hub](https://artifacthub.io/packages/helm/questdb/questdb)
 - [Helm Hub](https://hub.helm.sh/charts/questdb/questdb)
+- [GitHub Container Registry](oci://ghcr.io/questdb/questdb)
 
 ## Charts
 
