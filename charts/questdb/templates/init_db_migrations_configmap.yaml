@@ -13,61 +13,123 @@ data:
 
       SOURCE_DIR="/mnt/questdb"
       DEST_DIR="db"
-      TEMP_DIR="db_helm_migration_1_tmp_$(date +"%Y%m%d%H%M%S")"
+      # Deterministic (non-timestamped) backup name so a leftover from an
+      # interrupted run is recognisable and resumable on the next attempt.
+      BAK_DIR="db_helm_migration_1_bak"
+      # Durable completion sentinel: written LAST, checked FIRST. Its presence
+      # is the single source of truth that the migration finished, so the
+      # decision no longer depends on the marker (which the migration moves).
+      SENTINEL="$DEST_DIR/.helm_v1_migration_done"
+      # In-progress marker: written once db/ has been committed as the work dir.
+      # It lets a re-run tell "my own half-filled work dir" apart from "a fresh
+      # pre-existing db/", so an interrupted migration is never re-nested.
+      STARTED="$DEST_DIR/.helm_v1_migration_started"
       MARKER="tables.d.*"
 
       cd "$SOURCE_DIR"
 
-      # MARKER is a glob (tables.d.*); it must stay unquoted so the shell
-      # expands it to detect the marker. -d lists each match's own name
-      # rather than a directory's contents, so an (empty) directory match
-      # still registers as "found".
+      # dir_has_entries DIR -> 0 if DIR contains at least one entry (including
+      # hidden files and broken symlinks), 1 otherwise. Pure globbing, so it
+      # never shells out to ls for parsing.
+      dir_has_entries() {
+        _d=$1
+        for _e in "$_d"/* "$_d"/.[!.]* "$_d"/..?* ; do
+          [ -e "$_e" ] || [ -L "$_e" ] || continue
+          return 0
+        done
+        return 1
+      }
+
+      # 1. Already finished? The sentinel proves a prior run completed. Checked
+      #    first so a re-run after the marker was consumed still short-circuits.
+      if [ -e "$SENTINEL" ]; then
+        echo "Already migrated."
+        exit 0
+      fi
+
+      # 2. Crash recovery for a backup already sitting INSIDE db/. An older
+      #    layout (or any run that pushed the backup into db/ before relocating
+      #    it) can crash leaving db/<BAK_DIR> that still needs to become db/db.
+      #    In that state the marker has already been moved into db/, so this is
+      #    safe to finish before the checks below. A backup left at the ROOT is
+      #    instead handled by the idempotent main flow (steps 4-8), which stays
+      #    correct even when the marker is still at the root.
+      if [ -d "$DEST_DIR/$BAK_DIR" ]; then
+        if [ -e "$DEST_DIR/$DEST_DIR" ]; then
+          echo "$DEST_DIR/$DEST_DIR already exists; refusing to overwrite" >&2
+          exit 1
+        fi
+        mv "$DEST_DIR/$BAK_DIR" "$DEST_DIR/$DEST_DIR"
+      fi
+
+      # 3. Anything to do? Migrate if ANY of these hold: the legacy marker still
+      #    sits at the volume root, a leftover backup dir from an interrupted run
+      #    needs finishing, or an in-progress marker shows a prior run was cut
+      #    short. Relying on more than the marker is what makes a crash after the
+      #    marker was moved into db/ still resumable.
+      #    MARKER is a glob (tables.d.*); it must stay unquoted so the shell
+      #    expands it. -d lists each match's own name rather than a directory's
+      #    contents, so an (empty) directory match still registers as "found".
       # shellcheck disable=SC2086
-      if [ -z "$(ls -d $MARKER 2>/dev/null)" ] ; then
+      if [ -z "$(ls -d $MARKER 2>/dev/null)" ] && [ ! -e "$BAK_DIR" ] && [ ! -e "$STARTED" ]; then
         echo "File '$MARKER' not found. Nothing to move."
         exit 0
       fi
 
-      # If the db dir already exists, move its contents to a temp dir
-      if [ -e "$DEST_DIR" ]; then
-
-        # Check that the temp dir does not already exist. This is highly
-        # unlikely and we fail if this is the case
-        if [ -e "$TEMP_DIR" ]; then
-          echo "$TEMP_DIR exists! exiting data migration"
-          exit 1
+      # 4. Commit db/ as the work dir exactly once. The first pass (no backup and
+      #    no in-progress marker yet) is the only moment db/ is guaranteed to be
+      #    the user's pristine, pre-existing data; a NON-EMPTY db/ is moved aside
+      #    to the deterministic backup name then. The in-progress marker is
+      #    written right after, so any later crash is recognised as a resume and
+      #    the half-filled work dir is never mistaken for a fresh db/ to move
+      #    aside. (An empty pre-existing db/ holds no data worth preserving, so
+      #    it is simply reused as the work dir.)
+      if [ ! -e "$BAK_DIR" ] && [ ! -e "$STARTED" ]; then
+        if [ -d "$DEST_DIR" ] && dir_has_entries "$DEST_DIR"; then
+          mv "$DEST_DIR" "$BAK_DIR"
         fi
-
-        # Move the existing db dir to the temp location
-        mv "$DEST_DIR" "$TEMP_DIR"
-
+        mkdir -p "$DEST_DIR"
+        touch "$STARTED"
+      else
+        mkdir -p "$DEST_DIR"
       fi
 
-      # Make the target db dir
-      mkdir -p "$DEST_DIR"
-
-      # Move all visible files and dirs (except db) into the db dir
+      # 5. Move every visible root item into db/, skipping db/ itself and the
+      #    backup dir.
       for item in ./* ; do
-        # Skip if the glob matched nothing (null-glob guard). -L also covers
-        # broken symlinks, which -e (it follows the link) would miss.
+        # Null-glob guard; -L also covers broken symlinks that -e would miss.
         [ -e "$item" ] || [ -L "$item" ] || continue
-        if [ "$(basename "$item")" = "$DEST_DIR" ]; then
+        name="$(basename "$item")"
+        if [ "$name" = "$DEST_DIR" ] || [ "$name" = "$BAK_DIR" ]; then
           continue
         fi
         mv "$item" "$DEST_DIR/"
       done
 
-      # Move any hidden files, including broken symlinks (-e follows the link,
-      # so a broken symlink needs the -L check to be picked up)
+      # 6. Move every hidden root item into db/ (broken symlinks included via
+      #    -L; -e alone follows the link and would miss them).
       for item in ./.[!.]* ./..?* ; do
         [ -e "$item" ] || [ -L "$item" ] || continue
         mv "$item" "$DEST_DIR/"
       done
 
-      # Check if the temp dir exists in the new location, if so, move it back to db/db
-      if [ -d "$DEST_DIR/$TEMP_DIR" ]; then
-        mv "$DEST_DIR/$TEMP_DIR" "$DEST_DIR/$DEST_DIR"
+      # 7. Relocate the backed-up original db/ to its final home at db/db. The
+      #    refuse-if-db/db-exists check keeps the "don't silently clobber"
+      #    safety of the original script for genuinely ambiguous states.
+      if [ -e "$BAK_DIR" ]; then
+        if [ -e "$DEST_DIR/$DEST_DIR" ]; then
+          echo "$DEST_DIR/$DEST_DIR already exists; refusing to overwrite" >&2
+          exit 1
+        fi
+        mv "$BAK_DIR" "$DEST_DIR/$DEST_DIR"
       fi
 
-      echo "Migration complete!"
+      # 8. Finalise: drop the in-progress marker FIRST, then write the durable
+      #    completion sentinel LAST. If interrupted between the two, the next run
+      #    finds no work pending (marker, backup and in-progress marker all gone)
+      #    and correctly reports nothing to move -- the data is already in its
+      #    final shape, with no stray markers left behind.
+      rm -f "$STARTED"
+      touch "$SENTINEL"
 
+      echo "Migration complete!"
